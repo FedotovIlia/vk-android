@@ -18,8 +18,13 @@ import io.mmaltsev.vkeducation.data.appdetails.AppDetailsRepositoryImpl
 import io.mmaltsev.vkeducation.data.appdetails.local.AppDatabase
 import io.mmaltsev.vkeducation.data.appdetails.local.AppDetailsDao
 import io.mmaltsev.vkeducation.data.appdetails.local.AppDetailsEntityMapper
+import io.mmaltsev.vkeducation.data.appslist.AppItemMapper
+import io.mmaltsev.vkeducation.data.appslist.AppListApi
+import io.mmaltsev.vkeducation.data.appslist.AppListRepositoryImpl
 import io.mmaltsev.vkeducation.domain.appdetails.AppDetailsRepository
 import io.mmaltsev.vkeducation.domain.appdetails.GetAppDetailsUseCase
+import io.mmaltsev.vkeducation.domain.appslist.AppListRepository
+import io.mmaltsev.vkeducation.domain.appslist.GetAppListUseCase
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -115,4 +120,29 @@ object AppModule {
     @Singleton
     fun provideGetSimilarAppsUseCase(repository: SimilarAppsRepository): GetSimilarAppsUseCase =
         GetSimilarAppsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideAppListApi(): AppListApi =
+        AppListApi()
+
+    @Provides
+    @Singleton
+    fun provideAppItemMapper(): AppItemMapper =
+        AppItemMapper()
+
+    @Provides
+    @Singleton
+    fun provideAppListRepository(
+        api: AppListApi,
+        mapper: AppItemMapper,
+    ): AppListRepository =
+        AppListRepositoryImpl(api, mapper)
+
+    @Provides
+    @Singleton
+    fun provideGetAppListUseCase(
+        repository: AppListRepository,
+    ): GetAppListUseCase =
+        GetAppListUseCase(repository)
 }
