@@ -1,11 +1,13 @@
 package io.mmaltsev.vkeducation.presentation.appdetails
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.mmaltsev.vkeducation.domain.appdetails.GetSimilarAppsUseCase
 import io.mmaltsev.vkeducation.domain.appdetails.GetAppDetailsUseCase
+import io.mmaltsev.vkeducation.domain.appslist.GetAppListUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +23,11 @@ import javax.inject.Inject
 class AppDetailsViewModel @Inject constructor(
     private val getAppDetailsUseCase: GetAppDetailsUseCase,
     private val getSimilarAppsUseCase: GetSimilarAppsUseCase,
+    private val getAppListUseCase: GetAppListUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val appId: String = savedStateHandle.get<String>("appId") ?: "fa2e31b8-1234-4cf7-9914-108a170a1b01"
 
     private val _state = MutableStateFlow<AppDetailsState>(AppDetailsState.Loading)
     val state = _state.asStateFlow()
@@ -58,11 +64,13 @@ class AppDetailsViewModel @Inject constructor(
 
             try {
                 val similarApps = getSimilarAppsUseCase()
-                getAppDetailsUseCase("fa2e31b8-1234-4cf7-9914-108a170a1b01").collect { appDetails ->
+                val showcaseApps = getAppListUseCase().take(9) // 3 pages * 3 apps = 9 apps
+                getAppDetailsUseCase(appId).collect { appDetails ->
                     val currentState = _state.value
                     _state.value = AppDetailsState.Content(
                         appDetails = appDetails,
                         similarApps = similarApps,
+                        showcaseApps = showcaseApps,
                         descriptionCollapsed = (currentState as? AppDetailsState.Content)
                             ?.descriptionCollapsed ?: false,
                     )

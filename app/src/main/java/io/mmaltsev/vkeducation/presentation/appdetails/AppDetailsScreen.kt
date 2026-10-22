@@ -17,11 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.mmaltsev.vkeducation.R
+import io.mmaltsev.vkeducation.domain.appslist.AppItem
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AppDetailsScreen() {
-    val viewModel = hiltViewModel<AppDetailsViewModel>()
+fun AppDetailsScreen(
+    onBackClick: () -> Unit,
+    onShowcaseAppClick: (AppItem) -> Unit,
+    viewModel: AppDetailsViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsState()
     val events = viewModel.events
 
@@ -61,10 +65,7 @@ fun AppDetailsScreen() {
             is AppDetailsState.Content -> {
                 AppDetailsContent(
                     content = currentState,
-                    onBackClick = {
-                        // TODO: Открыть предыдущий экран через Jetpack Navigation
-                        viewModel.showUnderDevelopmentMessage()
-                    },
+                    onBackClick = onBackClick,
                     onShareClick = {
                         viewModel.showUnderDevelopmentMessage()
                     },
@@ -80,6 +81,7 @@ fun AppDetailsScreen() {
                     onDeveloperClick = {
                         viewModel.showUnderDevelopmentMessage()
                     },
+                    onShowcaseAppClick = onShowcaseAppClick,
                     modifier = Modifier
                         .fillMaxSize()
                         .safeDrawingPadding()

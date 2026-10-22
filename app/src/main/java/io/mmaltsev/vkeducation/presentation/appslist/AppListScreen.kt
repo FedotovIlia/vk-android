@@ -19,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.mmaltsev.vkeducation.R
+import io.mmaltsev.vkeducation.domain.appslist.AppItem
 
 @Composable
 fun AppListScreen(
+    onAppClick: (AppItem) -> Unit,
     viewModel: AppListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -62,7 +64,10 @@ fun AppListScreen(
                     }
                 }
                 is AppListState.Content -> {
-                    AppListContent(state = currentState)
+                    AppListContent(
+                        state = currentState,
+                        onAppClick = onAppClick,
+                    )
                 }
             }
         }
