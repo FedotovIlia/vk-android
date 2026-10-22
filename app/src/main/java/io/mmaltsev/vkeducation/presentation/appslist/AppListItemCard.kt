@@ -30,8 +30,10 @@ import io.mmaltsev.vkeducation.domain.appdetails.Category
 fun AppListItemCard(
     app: AppItem,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
