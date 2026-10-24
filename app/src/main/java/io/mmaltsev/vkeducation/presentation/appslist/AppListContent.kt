@@ -15,12 +15,16 @@ import io.mmaltsev.vkeducation.domain.appslist.AppItem
 fun AppListContent(
     state: AppListState.Content,
     onAppClick: (AppItem) -> Unit,
+    onToolbarClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val appIconUrl = state.apps.firstOrNull()?.iconUrl ?: "https://fastly.picsum.photos/id/237/200/200.jpg"
 
     Column(modifier = modifier.fillMaxSize()) {
-        AppListToolbar(appIconUrl = appIconUrl)
+        AppListToolbar(
+            appIconUrl = appIconUrl,
+            onToolbarClick = onToolbarClick,
+        )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),

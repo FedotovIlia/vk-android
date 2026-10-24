@@ -1,6 +1,7 @@
 package io.mmaltsev.vkeducation.presentation.appslist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,12 +25,14 @@ import io.mmaltsev.vkeducation.R
 @Composable
 fun AppListToolbar(
     appIconUrl: String,
+    onToolbarClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
+            .clickable { onToolbarClick() }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
