@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.mmaltsev.vkeducation.domain.appslist.GetAppListUseCase
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,11 +20,16 @@ class AppListViewModel @Inject constructor(
     private val _state = MutableStateFlow<AppListState>(AppListState.Loading)
     val state = _state.asStateFlow()
 
+    private val _events = Channel<AppListEvent>(BUFFERED)
+    val events = _events.receiveAsFlow()
+
     init {
         loadApps()
     }
 
     fun loadApps() {
+        if (_state.value is AppListState.Content) return
+
         viewModelScope.launch {
             _state.value = AppListState.Loading
             try {
@@ -30,6 +38,12 @@ class AppListViewModel @Inject constructor(
             } catch (e: Exception) {
                 _state.value = AppListState.Error
             }
+        }
+    }
+
+    fun onToolbarClick() {
+        viewModelScope.launch {
+            _events.send(AppListEvent.ShowSnackbar("Вы нажали на тулбар списка приложений"))
         }
     }
 }
